@@ -39,8 +39,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        editLogin = findViewById(R.id.edtLogin);
-        editSenha = findViewById(R.id.edtPassword);
+        editLogin = findViewById(R.id.editTextUsuario);
+        editSenha = findViewById(R.id.editTextSenha);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
     }

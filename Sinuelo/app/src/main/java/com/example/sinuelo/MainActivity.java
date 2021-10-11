@@ -5,17 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,15 +28,8 @@ public class MainActivity extends AppCompatActivity {
         token = it.getSerializableExtra("token").toString();
     }
 
-    public void abrirRegistro(View v) {
-        Intent it = new Intent(this, RegisterActivity.class);
-        it.putExtra("token", token);
-        startActivity(it);
-    }
-
-    public void abrirBusca(View v) {
-        Intent it = new Intent(this, DetailActivity.class);
-        it.putExtra("token", token);
+    public void abrirRotinasAnimais(View v) {
+        Intent it = new Intent(this, RotinasAnimaisActivity.class);
         startActivity(it);
     }
 

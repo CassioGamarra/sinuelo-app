@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              tools:context=".RotinasAnimaisActivity">
+
+  <include layout="@layout/header"></include>
+
+  <ImageView
+    android:id="@+id/imageView3"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    app:srcCompat="@drawable/icone_rotinas_animais"/>
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="ROTINAS COM ANIMAIS"
+    android:textSize="28sp"
+    android:layout_margin="8dp"
+    android:textFontWeight="700"
+    android:textColor="#004725"
+    android:fontFamily="@font/roboto_medium"
+    android:textAlignment="center"/>
+
+  <TextView
+    android:id="@+id/textView3"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:fontFamily="@font/roboto_black"
+    android:text="APROXIME O BRINCO DO LEITOR OU DIGITE O CÓDIGO:"
+    android:textAlignment="textStart"
+    android:textColor="#004725"
+    android:textSize="18sp"/>
+
+  <EditText
+    android:id="@+id/editTextCodigoBrinco"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_margin="8sp"
+    android:background="@drawable/edit_text_with_bg"
+    android:ems="10"
+    android:inputType="number"
+    android:padding="5dp"
+    android:textColor="#004725"
+    android:textSize="20sp"
+    android:tooltipText="Código"
+  />
+
+  <GridLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:columnCount="3"
+    android:layout_gravity="center"
+    android:layout_margin="8sp"
+  >
+    <Button
+      android:id="@+id/btnRegistrarAlerta"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
+      android:layout_margin="8sp"
+      android:onClick="registrarAlerta"
+      android:background="@drawable/btn_registrar_alerta"/>
+    <Button
+      android:id="@+id/btnRegistrarPeso"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
+      android:layout_margin="8sp"
+      android:background="@drawable/btn_registrar_peso"/>
+    <Button
+      android:id="@+id/btnRegistrarVacina"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
+      android:layout_margin="8sp"
+      android:background="@drawable/btn_registrar_vacina"/>
+  </GridLayout>
+
+  <GridLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:columnCount="3"
+    android:layout_gravity="center"
+    android:layout_margin="8sp"
+  >
+    <Button
+      android:id="@+id/btnRegistrarDoenca"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
+      android:layout_margin="8sp"
+      android:background="@drawable/btn_registrar_doenca"/>
+    <Button
+      android:id="@+id/btnRegistrarMedicacao"
+      android:layout_width="120dp"
+      android:layout_height="120dp"
+      android:layout_margin="8sp"
+      android:background="@drawable/btn_registrar_medicamento"/>
+    <Space android:layout_width="125dp"></Space>
+  </GridLayout>
+</LinearLayout>
