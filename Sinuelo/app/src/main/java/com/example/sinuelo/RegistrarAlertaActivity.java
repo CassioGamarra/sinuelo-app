@@ -20,5 +20,4 @@ public class RegistrarAlertaActivity extends AppCompatActivity {
     textViewCodigoBrinco = findViewById(R.id.textViewCodigoBrinco);
     textViewCodigoBrinco.setText(codigoBrinco);
   }
-
 }
