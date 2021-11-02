@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { ImageBackground, StatusBar, AsyncStorage } from 'react-native'; 
+import React, { useState, useEffect } from 'react';
+import { ImageBackground } from 'react-native'; 
 import { useNavigation } from '@react-navigation/native';
 import api from '../../services/api';
- 
+
+import { setToken, setUser, getToken, getUser } from '../../services/auth';
+
 import {
   extendTheme,
   NativeBaseProvider,
@@ -13,13 +15,10 @@ import {
   FormControl,
   Input,
   Link,
-  Button, 
-  useToast
+  Button
 } from 'native-base';
 
 import Toast from 'react-native-toast-message';
-
-//import Icon from 'react-native-vector-icons';
 
 import logo from '../../../assets/imagens/logo_login.png'; 
 import background from '../../../assets/imagens/background.png'
@@ -37,8 +36,8 @@ const theme = extendTheme({
 });
 
 export default function Login() { 
-  const navigation = useNavigation();
-  const toast = useToast();
+  const tokenFazenda = 'MV9mYXplbmRhX2VzcGVyYW5jYQ==';
+  const navigation = useNavigation(); 
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
 
@@ -50,6 +49,22 @@ export default function Login() {
     setLoading(false);
   } 
 
+  useEffect(() => {
+    buscarDados()
+  }, [])
+
+  async function buscarDados() {
+    try {
+      const token = await getToken();
+      const user = await getUser();
+      if(token && user) {
+        navigation.navigate('Home');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async function handleLogin() {
     if(usuario.trim().length === 0 || senha.trim().length === 0) {
       Toast.show({
@@ -58,18 +73,21 @@ export default function Login() {
         position: 'bottom'
       });
     } else {
-      navigation.navigate('Home'); 
-      /*startLoading();
+      startLoading();
       try { 
         const data = {
           "usuario": usuario,
-          "senha": senha
+          "senha": senha,
+          "tokenFazenda": tokenFazenda
         };
 
-        const callBackPost = await api.post('/admin/login', data);
-        if(callBackPost) {
-          if(callBackPost.data.statusCode === 200) {
-
+        const callBackPost = await api.post('/login', data);
+        if(callBackPost) {  
+          stopLoading();
+          if(callBackPost.data.statusCode === 200) { 
+            setToken(callBackPost.data.token); 
+            setUser(callBackPost.data.usuario);
+            navigation.navigate('Home');
           } else if (callBackPost.data.statusCode === 404) {
             Toast.show({
               type: "error",
@@ -88,13 +106,14 @@ export default function Login() {
         }
         
       } catch (err) {
+        console.log(err)
         stopLoading();
         Toast.show({
           type: "error",
           text1: 'Falha ao acessar, tente novamente mais tarde',
           position: 'bottom'
         });
-      }*/
+      }
     }
   }
 

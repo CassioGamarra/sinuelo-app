@@ -1,26 +1,22 @@
-import React from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 
 import { StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native'; 
 
 import {
   extendTheme,
-  NativeBaseProvider,
-  Center, 
+  NativeBaseProvider, 
   VStack, 
   Heading,
   Pressable,
   HStack,
-  Text,
-  Box
+  Text, 
 } from 'native-base';
  
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
-import Toast from 'react-native-toast-message';  
-import { buttonStyle } from 'styled-system';
+import FontAwesome from 'react-native-vector-icons/FontAwesome'; 
+import { getUser } from '../../services/auth';
 
 const theme = extendTheme({
   components: {
@@ -49,20 +45,33 @@ const styles = StyleSheet.create({
 });
 
 export default function Home() {
-  const navigation = useNavigation();
+  const navigation = useNavigation();   
+  const [usuario, setUsuario] = useState(''); 
 
-  function rotinas() {
-    navigation.navigate('Rotinas');
+
+  useEffect(() => {
+    buscarUsuario()
+  }, [])
+
+  async function buscarUsuario() {
+    try {
+      const user = await getUser();
+      if(user) {
+        setUsuario(user);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   return (
     <NativeBaseProvider theme={theme}> 
         <VStack space={4} marginTop={1} padding={2} >  
           <Heading color="#004725">
-            Bem vindo @usuario
+            Bem vindo {usuario}
           </Heading> 
           <HStack space={3}>
-            <Pressable style={styles.pressableButton}> 
+            <Pressable style={styles.pressableButton} onPress={() => navigation.navigate('Listar')}> 
                 <VStack space={3}  alignItems="center">
                   <FontAwesome
                     name="list-alt"
@@ -75,7 +84,7 @@ export default function Home() {
                 </VStack>  
             </Pressable>
 
-            <Pressable style={styles.pressableButton} onPress={rotinas}>
+            <Pressable style={styles.pressableButton} onPress={() => navigation.navigate('Rotinas')}>
               <VStack space={3} alignItems="center"> 
                   <MaterialCommunityIcons
                     name="cow"

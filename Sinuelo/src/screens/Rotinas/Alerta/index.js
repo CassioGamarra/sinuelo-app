@@ -7,23 +7,15 @@ import {
   extendTheme,
   NativeBaseProvider,
   Select, 
-  VStack, 
-  Heading,
+  VStack,  
   Pressable,
   HStack,
   Text,
   FormControl,
   Input
 } from 'native-base';
- 
-
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import AndDesign from 'react-native-vector-icons/AntDesign';
-
-import Toast from 'react-native-toast-message';  
-import { buttonStyle } from 'styled-system';
+  
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'; 
 
 const theme = extendTheme({
   components: {
@@ -55,7 +47,7 @@ const styles = StyleSheet.create({
 export default function Rotinas() { 
   const navigation = useNavigation();
   const route = useRoute();
-  const [codigoBrinco, setCodigoBrinco] = useState(route.params.codigoBrinco); 
+  const codigoBrinco = route.params.codigoBrinco; 
   const [alerta, setAlerta] = useState('');
 
   const alertas = [
