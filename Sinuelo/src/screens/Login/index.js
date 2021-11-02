@@ -57,8 +57,9 @@ export default function Login() {
         text1: 'Por favor, preencha o usuário e senha',
         position: 'bottom'
       });
-    } else { 
-      startLoading();
+    } else {
+      navigation.navigate('Home'); 
+      /*startLoading();
       try { 
         const data = {
           "usuario": usuario,
@@ -90,10 +91,10 @@ export default function Login() {
         stopLoading();
         Toast.show({
           type: "error",
-          text1: 'Falha ao acessar, tente mais tarde',
+          text1: 'Falha ao acessar, tente novamente mais tarde',
           position: 'bottom'
         });
-      }
+      }*/
     }
   }
 
@@ -118,7 +119,7 @@ export default function Login() {
               <Input 
                 variant="filled" 
                 value={usuario}
-                utoCorrect={false}
+                autoCorrect={false}
                 autoCapitalize="none"
                 onChangeText={(text) => setUsuario(text)}
               /> 
