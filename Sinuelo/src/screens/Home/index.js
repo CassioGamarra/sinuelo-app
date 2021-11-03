@@ -16,6 +16,8 @@ import {
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'; 
+import Ionicons from 'react-native-vector-icons/Ionicons'; 
+
 import { getUser } from '../../services/auth';
 
 const theme = extendTheme({
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff', 
   },
   textButton: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700",
     color: '#004725'
   }
@@ -72,10 +74,10 @@ export default function Home() {
           </Heading> 
           <HStack space={3}>
             <Pressable style={styles.pressableButton} onPress={() => navigation.navigate('Listar')}> 
-                <VStack space={3}  alignItems="center">
-                  <FontAwesome
-                    name="list-alt"
-                    size={30}
+                <VStack space={1}  alignItems="center">
+                  <Ionicons
+                    name="list-circle-outline"
+                    size={35}
                     color="#004725"
                   /> 
                   <Text style={styles.textButton}>
@@ -85,10 +87,10 @@ export default function Home() {
             </Pressable>
 
             <Pressable style={styles.pressableButton} onPress={() => navigation.navigate('Rotinas')}>
-              <VStack space={3} alignItems="center"> 
+              <VStack space={1} alignItems="center"> 
                   <MaterialCommunityIcons
                     name="cow"
-                    size={30}
+                    size={35}
                     color="#004725"
                   /> 
                   <Text style={styles.textButton}>
@@ -98,10 +100,37 @@ export default function Home() {
             </Pressable>
 
             <Pressable style={styles.pressableButton}>
-              <VStack space={3} alignItems="center"> 
+              <VStack space={1} alignItems="center"> 
+                  <MaterialCommunityIcons
+                    name="cloud-sync-outline"
+                    size={35}
+                    color="#004725"
+                  />  
+                  <Text style={styles.textButton}>
+                    Sincronizar
+                  </Text> 
+              </VStack>
+            </Pressable>
+          </HStack> 
+          <HStack space={3}>
+            <Pressable style={styles.pressableButton} onPress={() => navigation.navigate('Listar')}> 
+                <VStack space={1}  alignItems="center">
+                  <Ionicons
+                    name="color-wand-outline"
+                    size={35}
+                    color="#004725"
+                  /> 
+                  <Text style={styles.textButton}>
+                    Conectar Bastão
+                  </Text>
+                </VStack>  
+            </Pressable>   
+
+            <Pressable style={styles.pressableButton}>
+              <VStack space={1} alignItems="center"> 
                   <FontAwesome
                     name="gears"
-                    size={30}
+                    size={35}
                     color="#004725"
                   />  
                   <Text style={styles.textButton}>
@@ -109,7 +138,7 @@ export default function Home() {
                   </Text> 
               </VStack>
             </Pressable>
-          </HStack> 
+          </HStack>
         </VStack> 
     </NativeBaseProvider>
   );
