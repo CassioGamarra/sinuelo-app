@@ -16,10 +16,9 @@ import {
 } from 'native-base';
  
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome'; 
-import Toast from 'react-native-toast-message';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
 import { getToken } from '../../services/auth';
+import SQLiteManager from '../../database/SQLiteManager';
 
 const theme = extendTheme({
   components: {
@@ -52,39 +51,33 @@ const styles = StyleSheet.create({
 export default function Home() {
   const navigation = useNavigation();      
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const startLoading = () => {
+    setLoading(!loading);
+  }
+  const stopLoading = () => {
+    setLoading(false);
+  } 
 
   useEffect(() => {
     listarAnimais();
   }, [])
  
   async function listarAnimais() {
+    startLoading();
     try {
       const token = await getToken();
       if(token) { 
-        try {
-          const getAnimais = await api.get('/animais', {
-            headers: { Authorization: "Bearer " + token }
-          });  
-          setData(getAnimais.data); 
-          setLoading(false);
-        } catch (err) { 
-          if (err.response) {
-            if (err.response.status === 401) { 
-              Toast.show({
-                type: "error",
-                text1: 'Sua sessão expirou, por favor, realize login novamente!',
-                position: 'bottom'
-              });
-            }
-          } else { 
-            setLoading(false); 
-            Toast.show({
-              type: "error",
-              text1: 'Falha na conexão!',
-              position: 'bottom'
-            });
-          }
+        try { 
+          const getAnimais = await SQLiteManager.getAnimais();
+          const data = [];
+          for(let i = 0; i < getAnimais.rows.length; i++) {
+            data.push(getAnimais.rows.item(i));
+          }  
+          setData(data); 
+          stopLoading();
+        } catch (err) {  
+          stopLoading(); 
         }
 
       }
@@ -118,21 +111,27 @@ export default function Home() {
             Animais cadastrados
           </Heading> 
           <VStack space={3} style={styles.pressableButton}>
-            <HStack w="100%" justifyContent="space-between">
-              <Text style={styles.textTitle}>Animal</Text> 
-              <Text style={styles.textTitle}>Brinco</Text>
-            </HStack>
             {
+              data.length > 0 &&
+              <HStack w="100%" justifyContent="space-between">
+                <Text style={styles.textTitle}>Animal</Text> 
+                <Text style={styles.textTitle}>Brinco</Text>
+              </HStack>
+            }
+            {
+              data.length > 0 &&
               data.map((v) => {  
                 return (
-                  <HStack key={v.id} w="100%" justifyContent="space-between"> 
-                    <Text style={styles.text}> 
-                      {v.nome}
-                    </Text> 
-                    <Text style={styles.text}>{v.brinco}</Text>
+                  <HStack key={v.ID} w="100%" justifyContent="space-between"> 
+                    <Text style={styles.text}>{v.NOME}</Text> 
+                    <Text style={styles.text}>{v.BRINCO}</Text>
                   </HStack>
                 ) 
               })
+            }
+            {
+              data.length === 0 &&
+              <Text style={styles.textTitle}>Nenhum animal cadastrado</Text> 
             }
           </VStack>  
         </VStack> 

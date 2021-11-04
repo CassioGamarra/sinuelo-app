@@ -49,7 +49,11 @@ export default function Routes() {
         {/*Rotas para configuracoes*/}
         {/*Rotas para rotinas*/}
         <Stack.Screen name="Rotinas" component={Rotinas} options={generalOptions}/>
-        <Stack.Screen name="Alertas" component={Alerta} options={generalOptions}/>
+        <Stack.Screen name="Alertas" component={Alerta} options={generalOptions}/> 
+        <Stack.Screen name="Peso" component={Peso} options={generalOptions}/>
+        <Stack.Screen name="Vacinas" component={Vacina} options={generalOptions}/>
+        <Stack.Screen name="Doenças" component={Doenca} options={generalOptions}/>
+        <Stack.Screen name="Medicamentos" component={Medicamento} options={generalOptions}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

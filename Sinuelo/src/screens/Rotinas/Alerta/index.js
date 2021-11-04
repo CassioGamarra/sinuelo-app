@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 
 import { StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -12,10 +12,16 @@ import {
   HStack,
   Text,
   FormControl,
-  Input
+  Input,
+  Center,
+  Spinner,
+  Heading
 } from 'native-base';
   
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'; 
+import { getToken } from '../../../services/auth';
+import SQLiteManager from '../../../database/SQLiteManager'; 
+import Toast from 'react-native-toast-message';
 
 const theme = extendTheme({
   components: {
@@ -32,14 +38,14 @@ const theme = extendTheme({
 const styles = StyleSheet.create({
   pressableButton :{  
     width: '100%',
-    height: 80,
+    height: 50,
     padding: 8, 
-    backgroundColor: '#ffffff',  
+    backgroundColor: '#004725',  
   },
   textButton: {
     fontSize: 18,
     fontWeight: "700",
-    color: '#004725'
+    color: '#ffffff'
   }
 });
 
@@ -47,23 +53,106 @@ const styles = StyleSheet.create({
 export default function Rotinas() { 
   const navigation = useNavigation();
   const route = useRoute();
-  const codigoBrinco = route.params.codigoBrinco; 
+  const codigoBrinco = route.params.codigoBrinco;  
+  const idAnimal = route.params.idAnimal;
   const [alerta, setAlerta] = useState('');
+  const [data, setData] = useState([]); 
+  const [loading, setLoading] = useState(false);
+  const startLoading = () => {
+    setLoading(!loading);
+  }
+  const stopLoading = () => {
+    setLoading(false);
+  } 
 
-  const alertas = [
-    {
-      id: 1,
-      descricao: 'teste'
-    },
-    {
-      id: 2,
-      descricao: 'teste2'
-    }, 
-  ]
+  useEffect(() => {
+    listarAlertas(); 
+  }, [])
+ 
+  async function listarAlertas() {
+    startLoading();
+    try {
+      const token = await getToken();
+      if(token) { 
+        try { 
+          const getAlertas = await SQLiteManager.getAlertas();
+          let data = [];
+          for(let i = 0; i < getAlertas.rows.length; i++) {
+            data.push(getAlertas.rows.item(i));
+          }  
+          setData(data); 
+          stopLoading();
+        } catch (err) {  
+          stopLoading();   
+        }
+
+      }
+    } catch (e) {
+      console.log(e);
+    } 
+  }
+
+  async function cadastrarAlerta() {
+    if(alerta === '') {
+      Toast.show({
+        type: "error",
+        text1: 'Selecione um alerta',
+        position: 'bottom'
+      });
+    } else { 
+      startLoading();
+      try {
+        const data = {
+          idAlerta: Number(alerta),
+          idAnimal: idAnimal, 
+        }
+        const idAlerta = await SQLiteManager.verificarAlerta(data);
+        
+        if(idAlerta.rows.length > 0) {
+          stopLoading();
+          Toast.show({
+            type: "error",
+            text1: 'Alerta já cadastrado!',
+            position: 'bottom'
+          }); 
+        } else {
+          const id = await SQLiteManager.addAlerta(data); 
+          stopLoading();
+          if(id) {  
+            Toast.show({
+              type: "success",
+              text1: 'Alerta salvo',
+              position: 'bottom'
+            }); 
+          } else {
+            Toast.show({
+              type: "error",
+              text1: 'Ocorreu um erro ao salvar!',
+              position: 'bottom'
+            });
+          } 
+        }  
+      } catch(e) {
+        console.log(e);
+      } 
+    } 
+  }
 
   return (
     <NativeBaseProvider theme={theme}> 
-        <VStack space={4} marginTop={1} padding={2} >  
+    {
+        loading &&
+        <Center flex={1} px="3"> 
+          <VStack space={2} alignItems="center">
+            <Spinner accessibilityLabel="Loading posts" color="#004725" size="lg"/>
+            <Heading color="#004725" fontSize="lg">
+              Carregando
+            </Heading>
+          </VStack>
+        </Center>
+      }
+      { !loading && 
+        <VStack space={3} marginTop={1} padding={3} >  
           <FormControl>
               <FormControl.Label
                 _text={{
@@ -88,28 +177,36 @@ export default function Rotinas() {
             selectedValue={alerta}
             placeholder="Selecione um alerta" 
             onValueChange={(value) => setAlerta(value)}
+            style={{borderWidth: 1, borderColor: '#004725'}}
           >
             {
-              alertas.map((v) => {
-                return (<Select.Item key={v.id} label={v.descricao} value={v.id}/>)
+              data.map((v) => {
+                return (<Select.Item key={v.ID} label={v.DESCRICAO} value={v.ID}/>)
               })
             }
           </Select>
-          <HStack space={3}>
-            <Pressable style={styles.pressableButton} onPress={() => console.log('pru')}>
-              <VStack space={3} alignItems="center">
+        </VStack>    
+      }
+      {
+        !loading &&
+        <Center space={1} style={{position: 'absolute', bottom: 0, width: '100%'}}>
+          <Pressable style={styles.pressableButton} onPress={cadastrarAlerta}> 
+            <Center>  
+              <HStack space={3} alignItems="center">
                 <FontAwesome5
                   name="save"
                   size={30}
-                  color="#004725"
+                  color="#ffffff"
                 />
                 <Text style={styles.textButton}>
                   Salvar
                 </Text>
-              </VStack>
-            </Pressable> 
-          </HStack>  
-        </VStack> 
+              </HStack> 
+            </Center>  
+          </Pressable> 
+        </Center>
+      }
+      <Toast ref={(ref) => Toast.setRef(ref)} /> 
     </NativeBaseProvider>
   );
 }

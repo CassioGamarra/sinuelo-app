@@ -22,6 +22,7 @@ import Toast from 'react-native-toast-message';
 
 import logo from '../../../assets/imagens/logo_login.png'; 
 import background from '../../../assets/imagens/background.png'
+import SQLiteManager from '../../database/SQLiteManager';
 
 const theme = extendTheme({
   components: {
@@ -50,7 +51,8 @@ export default function Login() {
   } 
 
   useEffect(() => {
-    buscarDados()
+    buscarDados(); 
+    initDatabase();
   }, [])
 
   async function buscarDados() {
@@ -63,6 +65,10 @@ export default function Login() {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  async function initDatabase() {  
+    await SQLiteManager.initDB();
   }
 
   async function handleLogin() {

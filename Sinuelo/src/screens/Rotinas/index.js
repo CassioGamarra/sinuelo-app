@@ -19,6 +19,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'; 
 
 import Toast from 'react-native-toast-message';   
+import SQLiteManager from '../../database/SQLiteManager';
 
 const theme = extendTheme({
   components: {
@@ -51,7 +52,7 @@ export default function Rotinas() {
   const navigation = useNavigation();
   const [codigoBrinco, setCodigoBrinco] = useState(''); 
 
-  function registrarAlerta() {
+  async function registrarAlerta() {
     if(codigoBrinco.trim().length === 0) {
       Toast.show({
         type: "error",
@@ -59,7 +60,105 @@ export default function Rotinas() {
         position: 'bottom'
       });
     } else { 
-      navigation.navigate('Alertas', { codigoBrinco: codigoBrinco });
+      const codigo = await SQLiteManager.getBrincoByCodigo(codigoBrinco); 
+      if(codigo.rows.item(0)) { 
+        const idAnimal = codigo.rows.item(0).ID_ANIMAL;
+        navigation.navigate('Alertas', { codigoBrinco: codigoBrinco, idAnimal: idAnimal });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: 'Brinco não encontrado.',
+          position: 'bottom'
+        });
+      } 
+    }
+  }
+
+  async function registrarPeso() {
+    if(codigoBrinco.trim().length === 0) {
+      Toast.show({
+        type: "error",
+        text1: 'Por favor, preencha o código',
+        position: 'bottom'
+      });
+    } else { 
+      const codigo = await SQLiteManager.getBrincoByCodigo(codigoBrinco); 
+      if(codigo.rows.item(0)) { 
+        const idAnimal = codigo.rows.item(0).ID_ANIMAL;
+        navigation.navigate('Peso', { codigoBrinco: codigoBrinco, idAnimal: idAnimal });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: 'Brinco não encontrado.',
+          position: 'bottom'
+        });
+      } 
+    }
+  }
+
+  async function registrarVacina() {
+    if(codigoBrinco.trim().length === 0) {
+      Toast.show({
+        type: "error",
+        text1: 'Por favor, preencha o código',
+        position: 'bottom'
+      });
+    } else { 
+      const codigo = await SQLiteManager.getBrincoByCodigo(codigoBrinco); 
+      if(codigo.rows.item(0)) { 
+        const idAnimal = codigo.rows.item(0).ID_ANIMAL;
+        navigation.navigate('Vacinas', { codigoBrinco: codigoBrinco, idAnimal: idAnimal });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: 'Brinco não encontrado.',
+          position: 'bottom'
+        });
+      } 
+    }
+  }
+
+  async function registrarDoenca() {
+    if(codigoBrinco.trim().length === 0) {
+      Toast.show({
+        type: "error",
+        text1: 'Por favor, preencha o código',
+        position: 'bottom'
+      });
+    } else { 
+      const codigo = await SQLiteManager.getBrincoByCodigo(codigoBrinco); 
+      if(codigo.rows.item(0)) { 
+        const idAnimal = codigo.rows.item(0).ID_ANIMAL;
+        navigation.navigate('Doenças', { codigoBrinco: codigoBrinco, idAnimal: idAnimal });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: 'Brinco não encontrado.',
+          position: 'bottom'
+        });
+      } 
+    }
+  }
+
+  async function registrarMedicamento() {
+    if(codigoBrinco.trim().length === 0) {
+      Toast.show({
+        type: "error",
+        text1: 'Por favor, preencha o código',
+        position: 'bottom'
+      });
+    } else { 
+      const codigo = await SQLiteManager.getBrincoByCodigo(codigoBrinco); 
+      if(codigo.rows.item(0)) { 
+        const idAnimal = codigo.rows.item(0).ID_ANIMAL;
+        navigation.navigate('Medicamentos', { codigoBrinco: codigoBrinco, idAnimal: idAnimal });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: 'Brinco não encontrado.',
+          position: 'bottom'
+        });
+      } 
     }
   }
 
@@ -99,7 +198,7 @@ export default function Rotinas() {
               </VStack>
             </Pressable>
 
-            <Pressable style={styles.pressableButton}>
+            <Pressable style={styles.pressableButton} onPress={registrarPeso}>
               <VStack space={3} alignItems="center"> 
                   <FontAwesome5
                     name="balance-scale"
@@ -112,7 +211,7 @@ export default function Rotinas() {
               </VStack>
             </Pressable>
 
-            <Pressable style={styles.pressableButton}>
+            <Pressable style={styles.pressableButton} onPress={registrarVacina}>
               <VStack space={3} alignItems="center"> 
                   <FontAwesome5
                     name="syringe"
@@ -127,7 +226,7 @@ export default function Rotinas() {
           </HStack> 
 
           <HStack space={3}>
-            <Pressable style={styles.pressableButton}> 
+            <Pressable style={styles.pressableButton} onPress={registrarDoenca}> 
                 <VStack space={3}  alignItems="center">
                   <FontAwesome5
                     name="viruses"
@@ -140,7 +239,7 @@ export default function Rotinas() {
                 </VStack>  
             </Pressable>
 
-            <Pressable style={styles.pressableButton}>
+            <Pressable style={styles.pressableButton} onPress={registrarMedicamento}>
               <VStack space={3} alignItems="center"> 
                   <FontAwesome5
                     name="prescription-bottle"
