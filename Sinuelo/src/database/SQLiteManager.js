@@ -329,7 +329,7 @@ class SQLiteManager {
   addPeso(peso) {
     return new Promise((resolve) => {
       this.db.transaction((tx) => {
-        tx.executeSql(`INSERT INTO HISTORICO_PESAGENS (ID_ANIMAL, PESO, OBSERVACAO, DATA, HORA) VALUES (?, ?, DATE('NOW'), TIME('NOW'))`, [
+        tx.executeSql(`INSERT INTO HISTORICO_PESAGENS (ID_ANIMAL, PESO, OBSERVACAO, DATA, HORA) VALUES (?, ?, ?, DATE('NOW'), TIME('NOW'))`, [
           peso.idAnimal,
           peso.peso, 
           peso.observacao
@@ -347,7 +347,7 @@ class SQLiteManager {
   addVacina(vacina) {
     return new Promise((resolve) => {
       this.db.transaction((tx) => {
-        tx.executeSql(`INSERT INTO HISTORICO_ALERTAS (ID_VACINA, ID_ANIMAL, OBSERVACAO, DATA, HORA) VALUES (?, ?, ?, DATE('NOW'), TIME('NOW'))`, [
+        tx.executeSql(`INSERT INTO HISTORICO_VACINAS (ID_VACINA, ID_ANIMAL, OBSERVACAO, DATA, HORA) VALUES (?, ?, ?, DATE('NOW'), TIME('NOW'))`, [
           vacina.idVacina,
           vacina.idAnimal, 
           vacina.observacao
@@ -365,7 +365,7 @@ class SQLiteManager {
   addDoenca(doenca) {
     return new Promise((resolve) => {
       this.db.transaction((tx) => {
-        tx.executeSql(`INSERT INTO HISTORICO_ALERTAS (ID_DOENCA, ID_ANIMAL, OBSERVACAO,, DATA, HORA) VALUES (?, ?, ?, DATE('NOW'), TIME('NOW'))`, [
+        tx.executeSql(`INSERT INTO HISTORICO_DOENCAS (ID_DOENCA, ID_ANIMAL, OBSERVACAO, DATA, HORA) VALUES (?, ?, ?, DATE('NOW'), TIME('NOW'))`, [
           doenca.idDoenca,
           doenca.idAnimal, 
           doenca.observacao 
@@ -383,7 +383,7 @@ class SQLiteManager {
   addMedicamento(medicamento) {
     return new Promise((resolve) => {
       this.db.transaction((tx) => {
-        tx.executeSql(`INSERT INTO HISTORICO_ALERTAS (ID_MEDICAMENTO, ID_ANIMAL, OBSERVACAO,, DATA, HORA) VALUES (?, ?, ?, DATE('NOW'), TIME('NOW'))`, [
+        tx.executeSql(`INSERT INTO HISTORICO_MEDICAMENTOS (ID_MEDICAMENTO, ID_ANIMAL, OBSERVACAO, DATA, HORA) VALUES (?, ?, ?, DATE('NOW'), TIME('NOW'))`, [
           medicamento.idMedicamento,
           medicamento.idAnimal, 
           medicamento.observacao 
@@ -430,7 +430,7 @@ class SQLiteManager {
   getHistoricoVacinas() {
     return new Promise((resolve, reject) => {
       this.db.transaction((tx) => {
-        tx.executeSql('SELECT ID_VACINA, ID_ANIMAL, OBSERVACAO, DATA, HORA FROM HISTORICO_ALERTAS ORDER BY DATA, HORA', []).then(([tx, results]) => {
+        tx.executeSql('SELECT ID_VACINA, ID_ANIMAL, OBSERVACAO, DATA, HORA FROM HISTORICO_VACINAS ORDER BY DATA, HORA', []).then(([tx, results]) => {
           resolve(results);
         })
       }).then((result) => {
@@ -444,7 +444,7 @@ class SQLiteManager {
   getHistoricoDoencas() {
     return new Promise((resolve, reject) => {
       this.db.transaction((tx) => {
-        tx.executeSql('SELECT ID_DOENCA, ID_ANIMAL, OBSERVACAO, DATA, HORA FROM HISTORICO_ALERTAS ORDER BY DATA, HORA', []).then(([tx, results]) => {
+        tx.executeSql('SELECT ID_DOENCA, ID_ANIMAL, OBSERVACAO, DATA, HORA FROM HISTORICO_DOENCAS ORDER BY DATA, HORA', []).then(([tx, results]) => {
           resolve(results);
         })
       }).then((result) => {
@@ -458,7 +458,7 @@ class SQLiteManager {
   getHistoricoMedicamentos() {
     return new Promise((resolve, reject) => {
       this.db.transaction((tx) => {
-        tx.executeSql('SELECT ID_MEDICAMENTO, ID_ANIMAL, OBSERVACAO, DATA, HORA FROM HISTORICO_ALERTAS ORDER BY DATA, HORA', []).then(([tx, results]) => {
+        tx.executeSql('SELECT ID_MEDICAMENTO, ID_ANIMAL, OBSERVACAO, DATA, HORA FROM HISTORICO_MEDICAMENTOS ORDER BY DATA, HORA', []).then(([tx, results]) => {
           resolve(results);
         })
       }).then((result) => {

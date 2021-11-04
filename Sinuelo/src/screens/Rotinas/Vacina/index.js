@@ -79,10 +79,10 @@ export default function Rotinas() {
       const token = await getToken();
       if(token) { 
         try { 
-          const getAlertas = await SQLiteManager.getAlertas();
+          const getVacinas = await SQLiteManager.getVacinas();
           let data = [];
-          for(let i = 0; i < getAlertas.rows.length; i++) {
-            data.push(getAlertas.rows.item(i));
+          for(let i = 0; i < getVacinas.rows.length; i++) {
+            data.push(getVacinas.rows.item(i));
           }  
           setData(data); 
           stopLoading();
@@ -109,6 +109,7 @@ export default function Rotinas() {
         const data = {
           idVacina: Number(vacina),
           idAnimal: idAnimal, 
+          observacao: observacao !== '' ? observacao : null
         }
         const id = await SQLiteManager.addVacina(data);
         stopLoading();

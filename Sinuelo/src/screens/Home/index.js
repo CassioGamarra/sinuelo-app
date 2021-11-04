@@ -91,10 +91,37 @@ export default function Home() {
         }
       }
       
+      const getHistoricoPesagens = await SQLiteManager.getHistoricoPesagens(); 
       const historicoPesagens = [];
+      if(getHistoricoPesagens && getHistoricoPesagens.rows) {
+        for(let i = 0; i < getHistoricoPesagens.rows.length; i++) {
+          historicoPesagens.push(getHistoricoPesagens.rows.item(i));
+        }
+      }
+
+      const getHistoricoVacinas = await SQLiteManager.getHistoricoVacinas(); 
       const historicoVacinas = [];
+      if(getHistoricoVacinas && getHistoricoVacinas.rows) {
+        for(let i = 0; i < getHistoricoVacinas.rows.length; i++) {
+          historicoVacinas.push(getHistoricoVacinas.rows.item(i));
+        }
+      }
+
+      const getHistoricoDoencas = await SQLiteManager.getHistoricoDoencas(); 
       const historicoDoencas = [];
+      if(getHistoricoDoencas && getHistoricoDoencas.rows) {
+        for(let i = 0; i < getHistoricoDoencas.rows.length; i++) {
+          historicoDoencas.push(getHistoricoDoencas.rows.item(i));
+        }
+      }
+
+      const getHistoricoMedicamentos = await SQLiteManager.getHistoricoMedicamentos(); 
       const historicoMedicamentos = [];
+      if(getHistoricoMedicamentos && getHistoricoMedicamentos.rows) {
+        for(let i = 0; i < getHistoricoMedicamentos.rows.length; i++) {
+          historicoMedicamentos.push(getHistoricoMedicamentos.rows.item(i));
+        }
+      }
 
       const dados = {
         historicoAlertas: historicoAlertas,
