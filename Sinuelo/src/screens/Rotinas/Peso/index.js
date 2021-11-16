@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect, useRef } from 'react'; 
 
 import { StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -19,10 +19,11 @@ import {
   TextArea
 } from 'native-base';
   
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'; 
-import { getToken } from '../../../services/auth';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';  
 import SQLiteManager from '../../../database/SQLiteManager'; 
 import Toast from 'react-native-toast-message';
+
+import Alerta from '../../../components/Alerta';
 
 import { pesoMask } from '../../../utils/mask';
 
@@ -68,6 +69,26 @@ export default function Rotinas() {
   }
   const stopLoading = () => {
     setLoading(false);
+  } 
+
+  useEffect(() => {
+    verificarAlertas(); 
+  }, []);
+
+  /*Alertas*/  
+  const [alertOpen, setAlertOpen] = useState(false); 
+  const [animal, setAnimal] = useState('');
+  const [descricaoAlerta, setDescricaoAlerta] = useState('');
+  const cancelRef = useRef(null); 
+  const onAlertClose = () => setAlertOpen(false);
+
+  async function verificarAlertas() {
+    const alerta = await SQLiteManager.getAlertaByCodigo(codigoBrinco);
+    if (alerta.rows.item(0)) {
+      setAnimal(alerta.rows.item(0).NOME);
+      setDescricaoAlerta(alerta.rows.item(0).DESCRICAO);
+      setAlertOpen(true);
+    }
   } 
   
   async function cadastrarPeso() {
@@ -183,6 +204,14 @@ export default function Rotinas() {
           </Pressable> 
         </Center>
       }
+      <Alerta
+        cancelRef={cancelRef}
+        alertOpen={alertOpen}
+        onAlertClose={onAlertClose}
+        animal={animal}
+        codigoBrinco={codigoBrinco}
+        descricaoAlerta={descricaoAlerta}
+      />
       <Toast ref={(ref) => Toast.setRef(ref)} /> 
     </NativeBaseProvider>
   );

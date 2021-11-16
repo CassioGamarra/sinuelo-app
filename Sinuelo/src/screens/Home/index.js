@@ -22,7 +22,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-toast-message';
 import { getUser, getToken } from '../../services/auth'; 
 import api from '../../services/api';
-import SQLiteManager from '../../database/SQLiteManager';
+import SQLiteManager from '../../database/SQLiteManager'; 
 
 const theme = extendTheme({
   components: {
@@ -199,7 +199,7 @@ export default function Home() {
           console.log(e);
         } 
       } 
-    } catch (err) { 
+    } catch (err) {  
       stopLoading();
       Toast.show({
         type: "error",
@@ -269,7 +269,7 @@ export default function Home() {
             </Pressable>
           </HStack> 
           <HStack space={3}>
-            <Pressable style={styles.pressableButton} onPress={() => navigation.navigate('Listar')}> 
+            <Pressable style={styles.pressableButton} onPress={() => navigation.navigate('Conectar Bastão')}> 
                 <VStack space={1}  alignItems="center">
                   <Ionicons
                     name="color-wand-outline"

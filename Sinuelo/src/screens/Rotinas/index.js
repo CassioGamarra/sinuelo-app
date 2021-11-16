@@ -11,15 +11,14 @@ import {
   HStack,
   Text,
   FormControl,
-  Input
-} from 'native-base';
- 
+  Input, 
+} from 'native-base'; 
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'; 
 
 import Toast from 'react-native-toast-message';   
-import SQLiteManager from '../../database/SQLiteManager';
+import SQLiteManager from '../../database/SQLiteManager'; 
 
 const theme = extendTheme({
   components: {
@@ -50,7 +49,7 @@ const styles = StyleSheet.create({
 
 export default function Rotinas() {
   const navigation = useNavigation();
-  const [codigoBrinco, setCodigoBrinco] = useState(''); 
+  const [codigoBrinco, setCodigoBrinco] = useState('');  
 
   async function registrarAlerta() {
     if(codigoBrinco.trim().length === 0) {
@@ -59,9 +58,9 @@ export default function Rotinas() {
         text1: 'Por favor, preencha o código',
         position: 'bottom'
       });
-    } else { 
-      const codigo = await SQLiteManager.getBrincoByCodigo(codigoBrinco); 
-      if(codigo.rows.item(0)) { 
+    } else {  
+      const codigo = await SQLiteManager.getBrincoByCodigo(codigoBrinco);
+      if (codigo.rows.item(0)) {
         const idAnimal = codigo.rows.item(0).ID_ANIMAL;
         navigation.navigate('Alertas', { codigoBrinco: codigoBrinco, idAnimal: idAnimal });
       } else {
@@ -70,7 +69,7 @@ export default function Rotinas() {
           text1: 'Brinco não encontrado.',
           position: 'bottom'
         });
-      } 
+      }
     }
   }
 
@@ -253,7 +252,7 @@ export default function Rotinas() {
             </Pressable>
  
           </HStack>
-        </VStack> 
+        </VStack>
         <Toast ref={(ref) => Toast.setRef(ref)} /> 
     </NativeBaseProvider>
   );

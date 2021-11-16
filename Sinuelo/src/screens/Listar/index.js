@@ -16,8 +16,7 @@ import {
 } from 'native-base';
  
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
-import { getToken } from '../../services/auth';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';  
 import SQLiteManager from '../../database/SQLiteManager';
 
 const theme = extendTheme({
@@ -65,25 +64,17 @@ export default function Home() {
  
   async function listarAnimais() {
     startLoading();
-    try {
-      const token = await getToken();
-      if(token) { 
-        try { 
-          const getAnimais = await SQLiteManager.getAnimais();
-          const data = [];
-          for(let i = 0; i < getAnimais.rows.length; i++) {
-            data.push(getAnimais.rows.item(i));
-          }  
-          setData(data); 
-          stopLoading();
-        } catch (err) {  
-          stopLoading(); 
-        }
-
-      }
-    } catch (e) {
-      console.log(e);
-    } 
+    try { 
+      const getAnimais = await SQLiteManager.getAnimais();
+      const data = [];
+      for(let i = 0; i < getAnimais.rows.length; i++) {
+        data.push(getAnimais.rows.item(i));
+      }  
+      setData(data); 
+      stopLoading();
+    } catch (err) {  
+      stopLoading(); 
+    }
   }
   
   return (

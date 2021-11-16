@@ -8,6 +8,7 @@ import { getToken, getUser } from './services/auth';
 import Login from './screens/Login';
 import Home from './screens/Home';
 import Listar from './screens/Listar';
+import ConectarBastao from './screens/ConectarBastao';
 /*Rotinas com Animais*/ 
 import Rotinas from './screens/Rotinas'; //HOME
 import Alerta from './screens/Rotinas/Alerta';
@@ -47,6 +48,7 @@ export default function Routes() {
         <Stack.Screen name="Home" component={Home} options={homeOptions}/>
         <Stack.Screen name="Listar" component={Listar} options={generalOptions}/> 
         {/*Rotas para configuracoes*/}
+        <Stack.Screen name="Conectar Bastão" component={ConectarBastao} options={generalOptions}/> 
         {/*Rotas para rotinas*/}
         <Stack.Screen name="Rotinas" component={Rotinas} options={generalOptions}/>
         <Stack.Screen name="Alertas" component={Alerta} options={generalOptions}/> 

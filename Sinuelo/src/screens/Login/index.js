@@ -69,6 +69,7 @@ export default function Login() {
 
   async function initDatabase() {  
     await SQLiteManager.initDB();
+    await SQLiteManager.createTablesFromSchema();
   }
 
   async function handleLogin() {

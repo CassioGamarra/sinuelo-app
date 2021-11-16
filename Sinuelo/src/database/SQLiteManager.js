@@ -294,6 +294,27 @@ class SQLiteManager {
     });
   }
 
+  getAlertaByCodigo(codigo) {
+    return new Promise((resolve, reject) => {
+      this.db.transaction((tx) => {
+        tx.executeSql(`
+          SELECT A.NOME, AL.DESCRICAO
+          FROM BRINCOS B 
+            INNER JOIN ANIMAIS A ON B.ID_ANIMAL = A.ID
+            INNER JOIN HISTORICO_ALERTAS H ON A.ID = H.ID_ANIMAL
+            INNER JOIN ALERTAS AL ON H.ID_ALERTA = AL.ID
+          WHERE B.CODIGO = ? 
+        `, [codigo]).then(([tx, results]) => {
+          resolve(results);
+        })
+      }).then((result) => {
+        reject(result);
+      }).catch((error) => {
+        reject(error);
+      });
+    }); 
+  }
+
   //Inserts historicos 
   verificarAlerta(alerta) {
     return new Promise((resolve, reject) => {
