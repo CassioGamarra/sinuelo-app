@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
 
 import { StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; 
-import api from '../../services/api';
+import { useNavigation } from '@react-navigation/native';  
 
 import {
   extendTheme,

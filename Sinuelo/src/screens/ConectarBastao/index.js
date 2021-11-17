@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';  
-
-import { useNavigation } from '@react-navigation/native'; 
-import api from '../../services/api'; 
+ 
 
 import {
   SafeAreaView,
@@ -9,31 +7,42 @@ import {
   ScrollView,
   View,
   Text,
-  StatusBar,
-  NativeModules,
-  NativeEventEmitter,
-  Button,
-  Platform,
-  PermissionsAndroid,
+  Button, 
   FlatList,
   TouchableHighlight, 
-} from 'react-native';
- 
+} from 'react-native'; 
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
-import { getToken } from '../../services/auth';
-import SQLiteManager from '../../database/SQLiteManager';
+
+import { 
+  VStack, 
+  Heading,  
+  Spinner, 
+  Center, 
+  extendTheme, 
+  NativeBaseProvider
+} from 'native-base';
 
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
-
-
-/*TESTES*/
-import BluetoothManager from '../../bluetooth/BluetoothManager';
-const BluetoothManagerModule = NativeModules.BluetoothManager;
-const BluetoothManagerEmitter = new NativeEventEmitter(BluetoothManagerModule);
  
+import RNBluetoothClassic from 'react-native-bluetooth-classic';
+import Toast from 'react-native-toast-message';   
+
+import Bastao from '../../bastao/Bastao'; 
+
+const theme = extendTheme({
+  components: {
+    Input: {
+      baseStyle: {
+        color: '#004725',
+        fontWeight: 600
+      },
+      defaultProps: { size: 'lg' }
+    }
+  }
+});
+
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: Colors.lighter,
@@ -74,178 +83,62 @@ const styles = StyleSheet.create({
 });
 
 export default function Home() { 
-  /*TESTE*/
-  const [isScanning, setIsScanning] = useState(false);
-  const peripherals = new Map();
   const [list, setList] = useState([]); 
+  const [loading, setLoading] = useState(false);
+  const startLoading = () => {
+    setLoading(!loading);
+  }
+  const stopLoading = () => {
+    setLoading(false);
+  } 
+
+  async function getDispositivosPareados() {
+    startLoading();
+    try {
+      let bonded = await RNBluetoothClassic.getBondedDevices(); 
+      setList(bonded);
+      stopLoading();
+    } catch (error) { 
+      stopLoading();
+      console.log(error)
+    }
+  }
  
-  const startScan = () => {
-    if (!isScanning) {
-      BluetoothManager.scan([], 3, true).then((results) => {
-        console.log('Scanning...');
-        setIsScanning(true);
-      }).catch(err => {
-        console.error(err);
+  async function verificaConexao(item) {
+    if(item.name !== 'HC-06') {
+      Toast.show({
+        type: "error",
+        text1: 'Por favor, selecione o bastão (HC-06).',
+        position: 'bottom'
       });
-    }    
-  }
-
-  const handleStopScan = () => {
-    console.log('Scan is stopped');
-    setIsScanning(false);
-  }
-
-  const handleDisconnectedPeripheral = (data) => {
-    let peripheral = peripherals.get(data.peripheral);
-    if (peripheral) {
-      peripheral.connected = false;
-      peripherals.set(peripheral.id, peripheral);
-      setList(Array.from(peripherals.values()));
-    }
-    console.log('Disconnected from ' + data.peripheral);
-  }
-
-  const handleUpdateValueForCharacteristic = (data) => {
-    console.log('Received data from ' + data.peripheral + ' characteristic ' + data.characteristic, data.value);
-  }
-
-  const retrieveConnected = () => {
-    BluetoothManager.getConnectedPeripherals([]).then((results) => {
-      if (results.length == 0) {
-        console.log('No connected peripherals')
-      }
-      console.log(results);
-      for (var i = 0; i < results.length; i++) {
-        var peripheral = results[i];
-        peripheral.connected = true;
-        peripherals.set(peripheral.id, peripheral);
-        setList(Array.from(peripherals.values()));
-      }
-    });
-  }
-
-  const handleDiscoverPeripheral = (peripheral) => {
-    console.log('Got ble peripheral', peripheral);
-    if (!peripheral.name) {
-      peripheral.name = 'NO NAME';
-    }
-    peripherals.set(peripheral.id, peripheral);
-    setList(Array.from(peripherals.values()));
-  }
-
-  const testPeripheral = (peripheral) => {
-    if (peripheral){
-      if (peripheral.connected){
-        BluetoothManager.disconnect(peripheral.id);
-      }else{
-        BluetoothManager.connect(peripheral.id).then(() => {
-          let p = peripherals.get(peripheral.id);
-          if (p) {
-            p.connected = true;
-            peripherals.set(peripheral.id, p);
-            setList(Array.from(peripherals.values()));
-          }
-          console.log('Connected to ' + peripheral.id);
-
-
-          setTimeout(() => {
-
-            /* Test read current RSSI value */
-            BluetoothManager.retrieveServices(peripheral.id).then((peripheralData) => {
-              console.log('Retrieved peripheral services', peripheralData);
-
-              BluetoothManager.readRSSI(peripheral.id).then((rssi) => {
-                console.log('Retrieved actual RSSI value', rssi);
-                let p = peripherals.get(peripheral.id);
-                if (p) {
-                  p.rssi = rssi;
-                  peripherals.set(peripheral.id, p);
-                  setList(Array.from(peripherals.values()));
-                }                
-              });                                          
-            });
-
-            // Test using bleno's pizza example
-            // https://github.com/sandeepmistry/bleno/tree/master/examples/pizza
-            /*
-            BluetoothManager.retrieveServices(peripheral.id).then((peripheralInfo) => {
-              console.log(peripheralInfo);
-              var service = '13333333-3333-3333-3333-333333333337';
-              var bakeCharacteristic = '13333333-3333-3333-3333-333333330003';
-              var crustCharacteristic = '13333333-3333-3333-3333-333333330001';
-              setTimeout(() => {
-                BluetoothManager.startNotification(peripheral.id, service, bakeCharacteristic).then(() => {
-                  console.log('Started notification on ' + peripheral.id);
-                  setTimeout(() => {
-                    BluetoothManager.write(peripheral.id, service, crustCharacteristic, [0]).then(() => {
-                      console.log('Writed NORMAL crust');
-                      BluetoothManager.write(peripheral.id, service, bakeCharacteristic, [1,95]).then(() => {
-                        console.log('Writed 351 temperature, the pizza should be BAKED');
-                        
-                        //var PizzaBakeResult = {
-                        //  HALF_BAKED: 0,
-                        //  BAKED:      1,
-                        //  CRISPY:     2,
-                        //  BURNT:      3,
-                        //  ON_FIRE:    4
-                        //};
-                      });
-                    });
-                  }, 500);
-                }).catch((error) => {
-                  console.log('Notification error', error);
-                });
-              }, 200);
-            });*/
-
-            
-
-          }, 900);
-        }).catch((error) => {
-          console.log('Connection error', error);
+      return;
+    } else { 
+      startLoading();
+      try { 
+        const connection = await item.isConnected();
+        if (!connection) {
+          connection = await item.connect({ DELIMITER: '\r' });
+        }
+        const bastao = Bastao.getInstance();
+        bastao.setBastao(item);
+        Toast.show({
+          type: "success",
+          text1: 'Bastão conectado.',
+          position: 'bottom'
         });
+        stopLoading();
+      } catch (error) {
+        // Handle error accordingly
+        stopLoading();
+        console.log(error)
       }
     }
-
-  }
-
-  useEffect(() => {
-    BluetoothManager.start({showAlert: false});
-
-    BluetoothManagerEmitter.addListener('BluetoothManagerDiscoverPeripheral', handleDiscoverPeripheral);
-    BluetoothManagerEmitter.addListener('BluetoothManagerStopScan', handleStopScan );
-    BluetoothManagerEmitter.addListener('BluetoothManagerDisconnectPeripheral', handleDisconnectedPeripheral );
-    BluetoothManagerEmitter.addListener('BluetoothManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic );
-
-    if (Platform.OS === 'android' && Platform.Version >= 23) {
-      PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((result) => {
-          if (result) {
-            console.log("Permission is OK");
-          } else {
-            PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then((result) => {
-              if (result) {
-                console.log("User accept");
-              } else {
-                console.log("User refuse");
-              }
-            });
-          }
-      });
-    }  
-    
-    return (() => {
-      console.log('unmount');
-      BluetoothManagerEmitter.removeListener('BluetoothManagerDiscoverPeripheral', handleDiscoverPeripheral);
-      BluetoothManagerEmitter.removeListener('BluetoothManagerStopScan', handleStopScan );
-      BluetoothManagerEmitter.removeListener('BluetoothManagerDisconnectPeripheral', handleDisconnectedPeripheral );
-      BluetoothManagerEmitter.removeListener('BluetoothManagerDidUpdateValueForCharacteristic', handleUpdateValueForCharacteristic );
-    })
-  }, []);
+  }  
 
   const renderItem = (item) => {
     const color = item.connected ? 'green' : '#fff';
     return (
-      <TouchableHighlight onPress={() => testPeripheral(item) }>
+      <TouchableHighlight onPress={() => verificaConexao(item) }>
         <View style={[styles.row, {backgroundColor: color}]}>
           <Text style={{fontSize: 12, textAlign: 'center', color: '#333333', padding: 10}}>{item.name}</Text>
           <Text style={{fontSize: 10, textAlign: 'center', color: '#333333', padding: 2}}>RSSI: {item.rssi}</Text>
@@ -255,46 +148,50 @@ export default function Home() {
     );
   }
 
-  
   return ( 
-    <>
-    <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            
-            <View style={{margin: 10}}>
-              <Button 
-                title={'Scan Bluetooth (' + (isScanning ? 'on' : 'off') + ')'}
-                onPress={() => startScan() } 
-              />            
-            </View>
+    <> 
 
-            <View style={{margin: 10}}>
-              <Button title="Retrieve connected peripherals" onPress={() => retrieveConnected() } />
-            </View>
+      {
+        loading &&
+        <NativeBaseProvider theme={theme}> 
+          <Center flex={1} px="3">
+            <VStack space={2} alignItems="center">
+              <Spinner accessibilityLabel="Loading posts" color="#004725" size="lg" />
+              <Heading color="#004725" fontSize="lg">
+                Carregando
+              </Heading>
+            </VStack>
+          </Center>
+        </NativeBaseProvider>
+      }
+      {
+        !loading &&
+        <SafeAreaView>
+          <ScrollView
+            contentInsetAdjustmentBehavior="automatic"
+            style={styles.scrollView}>
+            <View style={styles.body}>
 
-            {(list.length == 0) &&
-              <View style={{flex:1, margin: 20}}>
-                <Text style={{textAlign: 'center'}}>No peripherals</Text>
+              <View style={{ margin: 10 }}>
+                <Button color="#004725" title="Buscar dispositivos" onPress={() => getDispositivosPareados()} />
               </View>
-            }
-          
-          </View>              
-        </ScrollView>
-        <FlatList
+
+              {(list.length == 0) &&
+                <View style={{ flex: 1, margin: 20 }}>
+                  <Text style={{ textAlign: 'center' }}>Nenhum dispositivo encontrado</Text>
+                </View>
+              }
+
+            </View>
+          </ScrollView>
+          <FlatList
             data={list}
-            renderItem={({ item }) => renderItem(item) }
+            renderItem={({ item }) => renderItem(item)}
             keyExtractor={item => item.id}
-          />              
-      </SafeAreaView>
+          />
+        </SafeAreaView>
+      }           
+      <Toast ref={(ref) => Toast.setRef(ref)} />  
     </>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useEffect, useState, useRef } from 'react'; 
 
 import { StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -19,6 +19,8 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import Toast from 'react-native-toast-message';   
 import SQLiteManager from '../../database/SQLiteManager'; 
+
+import Bastao from '../../bastao/Bastao';
 
 const theme = extendTheme({
   components: {
@@ -49,9 +51,19 @@ const styles = StyleSheet.create({
 
 export default function Rotinas() {
   const navigation = useNavigation();
-  const [codigoBrinco, setCodigoBrinco] = useState('');  
+  const [codigoBrinco, setCodigoBrinco] = useState('');   
+  const inputLeitura = useRef(null); 
+  const bastao = Bastao.getInstance();
+  var intervaloLeitura = null;
 
-  async function registrarAlerta() {
+  useEffect(() => {  
+    iniciarLeituraBastao();
+    return () => {
+      clearInterval(intervaloLeitura);
+    }
+  }, []);
+
+  async function registrarAlerta() {   
     if(codigoBrinco.trim().length === 0) {
       Toast.show({
         type: "error",
@@ -161,6 +173,34 @@ export default function Rotinas() {
     }
   }
 
+  async function iniciarLeituraBastao() {
+    inputLeitura.current.focus(); 
+    if(bastao.getBastao()) { 
+      intervaloLeitura = setInterval(() => lerDadosBluetooth(), 1000);
+    } else {
+      Toast.show({
+        type: "info",
+        text1: 'Bastao não conectado.',
+        position: 'bottom'
+      });
+    }
+  }
+
+  async function lerDadosBluetooth() {
+    const device = bastao.getBastao();
+    try { 
+      const available = await device.available();   
+      if (available > 0) {
+        for (let i = 0; i < available; i++) { 
+          const data = await device.read();  
+          setCodigoBrinco(data.replace('\r', ''));
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <NativeBaseProvider theme={theme}> 
         <VStack space={4} marginTop={1} padding={2} >  
@@ -181,6 +221,7 @@ export default function Rotinas() {
                 autoCapitalize="none"
                 onChangeText={(text) => setCodigoBrinco(text)}
                 style={{borderColor: '#004725'}}
+                ref={inputLeitura}
               /> 
             </FormControl>
           <HStack space={3}>
