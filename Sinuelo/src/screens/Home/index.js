@@ -20,7 +20,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome from 'react-native-vector-icons/FontAwesome'; 
 import Ionicons from 'react-native-vector-icons/Ionicons';  
 import Toast from 'react-native-toast-message';
-import { getUser, getToken } from '../../services/auth'; 
+import { getUser, getToken, clearStorage } from '../../services/auth'; 
 import api from '../../services/api';
 import SQLiteManager from '../../database/SQLiteManager'; 
 
@@ -184,8 +184,10 @@ export default function Home() {
                     position: 'bottom'
                   });
                 }
+                clearStorage();
               } else { 
                 stopLoading(); 
+                clearStorage();
                 Toast.show({
                   type: "error",
                   text1: 'Falha na conexão!',
@@ -196,6 +198,7 @@ export default function Home() {
           }
         } catch (e) {
           stopLoading();
+          clearStorage();
           console.log(e);
         } 
       } 
@@ -205,7 +208,8 @@ export default function Home() {
         type: "error",
         text1: 'Falha ao acessar, tente novamente mais tarde',
         position: 'bottom'
-      });
+      }); 
+      clearStorage();
     } 
   }
 
@@ -280,20 +284,7 @@ export default function Home() {
                     Conectar Bastão
                   </Text>
                 </VStack>  
-            </Pressable>   
-
-            <Pressable style={styles.pressableButton}>
-              <VStack space={1} alignItems="center"> 
-                  <FontAwesome
-                    name="gears"
-                    size={35}
-                    color="#004725"
-                  />  
-                  <Text style={styles.textButton}>
-                    Configurações
-                  </Text> 
-              </VStack>
-            </Pressable>
+            </Pressable>    
           </HStack>
         </VStack> 
       }
