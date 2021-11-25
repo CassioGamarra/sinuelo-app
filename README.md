@@ -35,7 +35,7 @@ Para instalar o projeto, basta rodar o seguinte comando:
 npm install
 ```
 
-Após a instalação, para iniciar o projeto no modo de desenvolvimento, rode os seguinte comando, recomenda-se o uso de dois terminais distintos:
+Após a instalação, para iniciar o projeto no modo de desenvolvimento, rode os seguintes comandos dentro da pasta **Sinuelo**, recomenda-se o uso de dois terminais distintos:
 
 No primeiro terminal rode o seguinte comando:
 ```bash
